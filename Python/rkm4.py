@@ -17,8 +17,11 @@ y0 = y
 Xframe = [x]
 Yframe = [y]
 # Определим функцию ОДУ
+function = math.sin(x)+math.cos(y)
+lable_fun = str(math.sin(x)+math.cos(y))
+
 def functionODU (x, y):
-    f = math.sin(x)+math.cos(y)
+    f = function
     return f
 
 # Цикл метода РК4
@@ -49,6 +52,15 @@ print ('Это у: ', Yframe)
 '''
 # График результата
 
-plt.plot(Xframe, Yframe, 'r-')
+#plt.rc('font',**{'family':'verdana'})
+plt.xlabel("X")
+plt.ylabel("Y")
+plt.plot(Xframe, Yframe, "b-", label=lable_fun)
+plt.legend()
+plt.grid()
 plt.show()
+
+
+#plt.plot(Xframe, Yframe, 'r-')
+#plt.show()
 print ('Ответ: y('+ str(y0) + ') =', Yframe[-1])
