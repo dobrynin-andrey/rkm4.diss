@@ -1,5 +1,5 @@
 ﻿import sys
-#import math
+import math
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import (QWidget, QDesktopWidget, QToolTip, QPushButton, QApplication, QMessageBox, QMainWindow, QAction, qApp, QLabel, QLineEdit, QTextEdit, QGridLayout, QHBoxLayout, QVBoxLayout)
 from PyQt5.QtGui import QFont, QIcon 
@@ -33,12 +33,16 @@ class Example(QWidget):
         '''
         
         okButton = QPushButton("Рассчитать")
+        
+        # Click on button okButton
         okButton.clicked.connect(self.rkm4)
+        
         step = QLabel('Размер шага:')
         final_x = QLabel('Решать с x = [0, xfinal]:')
         nach_x = QLabel('Начальное значение X:')
         nach_y = QLabel('Начальное значение Y:')
         znach_function= QLabel('Функция:')
+        
         self.stepEdit = QLineEdit()
         self.final_xEdit = QLineEdit()
         self.nach_xEdit = QLineEdit()
@@ -47,12 +51,11 @@ class Example(QWidget):
         
         lbl_otvet = QLabel('Ответ:')
         self.otvet = QLabel(self)
+        
+        
+        lbl_log = QLabel('Лог:')
+        self.log = QLabel(self)
         #znach_functionEdit.textChanged[str].connect(self.rkm4)
-        
-        
-        
-        
-        #eviewEdit = QTextEdit()
         
         '''
         zhachbox = QHBoxLayout()
@@ -80,20 +83,8 @@ class Example(QWidget):
         grid.addWidget(lbl_otvet, 4, 0)
         grid.addWidget(self.otvet, 4, 1, 1, 1)
         grid.addWidget(okButton, 5, 0)
-        
-        
-       # print step.text()
-#        h = self.stepEdit.text()
-         
-        #print(h)
-        
-        
-        # Click on button okButton
-        
-        #self.connect(okButton, QtCore.SIGNAL('clicked()'),
-                    # self.rkm4)
-        
-        
+        grid.addWidget(lbl_log, 6, 0)
+        grid.addWidget(self.log, 6, 1)
         
         '''
         ## Реализация вплывающих подсказок
@@ -151,8 +142,82 @@ class Example(QWidget):
             
     def rkm4(self):
         self.resize(1000, 500)
-        self.otvet.setText(self.znach_functionEdit.text())
+        #self.otvet.setText(self.znach_functionEdit.text())
+        #self.otvet.adjustSize()
+        
+        # Метод Рунге-Кутты 4-го порядка
+        # Пример dy/dx = sin(x)+cos(y), y(0)=5;
+
+
+        # Параметры
+        h = self.stepEdit.text()    # Размер шага
+        xfinal = self.final_xEdit.text()   # Решать с x = [0, xfinal]
+        self.otvet.setText(h)
         self.otvet.adjustSize()
+        
+        # Начальные значения
+        x = self.nach_xEdit.text()
+        y = self.nach_yEdit.text()
+        
+        self.log.setText(x)
+        self.log.adjustSize()
+        
+        y0 = y
+        
+        Xframe = [x]
+        self.Yframe = [y]
+        # Определим функцию ОДУ
+        function = self.znach_functionEdit.text()   # math.sin(x)+math.cos(y)
+        lable_fun = function
+        
+        def functionODU (x, y):
+            f = function
+            return f
+        
+        # Цикл метода РК4
+        for i in range(math.ceil(xfinal/h)):
+        
+            k1 = functionODU (x        , y           )
+            k2 = functionODU (x + 0.5*h, y + 0.5*k1*h)
+            k3 = functionODU (x + 0.5*h, y + 0.5*k2*h)
+            k4 = functionODU (x +     h, y +     k3*h)
+        
+            y = y + h/6*(k1 + 2*k2 + 2*k3 + k4)
+            # Поместим y в массив
+            self.Yframe += [y]
+            # Поместим x в массив
+            Xframe += [x]
+            # Обновим x
+            x = x + h;
+        
+        print ('Это х: ', Xframe)
+        print ('Это у: ', self.Yframe)
+        
+        
+        '''
+            #print ('Это k1: ', k1)
+            #print ('Это k2: ', k2)
+            #print ('Это k3: ', k3)
+            #print ('Это k4: ', k4)
+        '''
+        # График результата
+        
+        #plt.rc('font',**{'family':'verdana'})
+        plt.xlabel("X")
+        plt.ylabel("Y")
+        plt.plot(Xframe, self.Yframe, "b-", label=lable_fun)
+        plt.legend()
+        plt.grid()
+        plt.show()
+        
+        
+        #plt.plot(Xframe, Yframe, 'r-')
+        #plt.show()
+        print ('Ответ: y('+ str(y0) + ') =', self.Yframe[-1])
+         
+        #self.otvet.setText(self.Yframe[-1])
+        #self.otvet.adjustSize()
+        
         
      
         
